@@ -1,5 +1,6 @@
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.awt.image.*;
 import java.awt.FlowLayout;
@@ -7,6 +8,7 @@ import java.awt.FlowLayout;
 import javax.swing.*;
 
 import static org.opencv.imgcodecs.Imgcodecs.*;
+import static org.opencv.imgproc.Imgproc.*;
 
 /**
  * main
@@ -21,6 +23,11 @@ public class main {
 
         BufferedImage image = convertMatToImage(colorfulImage);
         mostraImagem(image);
+
+        // Convertendo a imagem para escala de cinza
+        Mat greyImage = new Mat();
+        Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
+        mostraImagem(convertMatToImage(greyImage));
     }
 
     public static BufferedImage convertMatToImage(Mat mat) {
