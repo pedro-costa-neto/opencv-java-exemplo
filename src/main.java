@@ -4,6 +4,7 @@ import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
@@ -46,15 +47,47 @@ public class main {
     
     /**
      * Exemplo 01
+     * Deteccao de faces
      */
     public static void exemplo01() {
-        Mat colorfulImage = imread("src\\images\\pessoas\\beatles.jpg");
+        Mat colorfulImage = imread("src\\images\\pessoas\\pessoas3.jpg");
         Mat greyImage = new Mat();
         Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
         
         CascadeClassifier cc = new CascadeClassifier("src\\cascades\\haarcascade_frontalface_default.xml");
         MatOfRect facesDetectadas = new MatOfRect();
-        cc.detectMultiScale(greyImage, facesDetectadas);
+        cc.detectMultiScale(
+            greyImage, 
+            facesDetectadas,
+            //(Valor variavel de acordo com o tamanho da imagem)
+            1.19, // Scale factor 
+
+            /*
+            minNeighbors (Quantos vizinos cada retangulo candidato deve ter para mante-lo).
+            Valores altos = Menos detecções, porem, apresenta maior qualidade.
+            */
+            3, 
+
+            /*
+            Semelhante a uma heuristica
+            Rejeita alguma regioes de imagens ue contem muitas ou poucas
+            bordas (que nao contem o objeto procurado)
+            Utilizado em cascades "antigos"
+
+            HaarCascade
+            Traw_Cascade (Novo, tem melhor desempenho)
+
+            Recomentado deixar o valor zerado (funciona apenas nos HaarCascade antigos).
+            */
+            0, // flag
+
+            /*
+            Tamanho minimo e maximo das faces que devem ser detectadas.
+            Valores definido por pixels.
+            */
+            new Size(30, 30), // minSize
+            new Size(500, 500) // mazSize
+        );
 
         System.out.println("Quantidade de faces detectadas: " + facesDetectadas.toArray().length);
 
