@@ -25,7 +25,8 @@ public class main {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         //exemplo00();
-        exemplo01();
+        //exemplo01();
+        exemplo02();
     }
 
     /**
@@ -105,6 +106,50 @@ public class main {
         mostraImagem(convertMatToImage(colorfulImage));
     }
 
+    /**
+     * Exemplo 02
+     * Deteccao de faces e olhos
+     */
+    public static void exemplo02() {
+        Mat colorfulImage = imread("src\\images\\pessoas\\beatles.jpg");
+        Mat greyImage = new Mat();
+        Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
+        
+        CascadeClassifier cc = new CascadeClassifier("src\\cascades\\haarcascade_frontalface_default.xml");
+        MatOfRect facesDetectadas = new MatOfRect();
+        cc.detectMultiScale(greyImage, facesDetectadas);
+
+        System.out.println("Quantidade de faces detectadas: " + facesDetectadas.toArray().length);
+
+        for(Rect rect : facesDetectadas.toArray()) {
+            System.out.println("Localizacao da face na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+            Imgproc.rectangle(
+                colorfulImage, // Imagem que sera adicionada os retangulos
+                new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                new Scalar(0, 0, 255), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                2 // Tamanho da borda em pexels
+            );
+        }
+
+        CascadeClassifier ccOlho = new CascadeClassifier("src\\cascades\\haarcascade_eye.xml");
+        MatOfRect olhosDetectadas = new MatOfRect();
+        ccOlho.detectMultiScale(greyImage, olhosDetectadas);
+
+        System.out.println("Quantidade de olhos detectadas: " + olhosDetectadas.toArray().length);
+        for(Rect rect : olhosDetectadas.toArray()) {
+            System.out.println("Localizacao do olho na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+            Imgproc.rectangle(
+                colorfulImage, // Imagem que sera adicionada os retangulos
+                new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                new Scalar(0, 255, 00), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                2 // Tamanho da borda em pexels
+            );
+        }
+
+        mostraImagem(convertMatToImage(colorfulImage));
+    }
 
     
 
