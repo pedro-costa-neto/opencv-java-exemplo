@@ -7,11 +7,14 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
+import org.opencv.videoio.VideoCapture;
 
+import java.awt.*;
 import java.awt.image.*;
 import java.awt.FlowLayout;
 
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 
 import static org.opencv.imgcodecs.Imgcodecs.*;
 import static org.opencv.imgproc.Imgproc.*;
@@ -26,7 +29,9 @@ public class main {
 
         //exemplo00();
         //exemplo01();
-        exemplo02();
+        //exemplo02();
+        //exemplo03();
+        exemplo04();
     }
 
     /**
@@ -151,7 +156,167 @@ public class main {
         mostraImagem(convertMatToImage(colorfulImage));
     }
 
+    /**
+     * Exemplo 03
+     * Acessando a Webcan com o OpenCV
+     */
+    public static void exemplo03() {
+
+        // Configurando janela
+        JFrame janela = new JFrame();
+        janela.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        janela.setSize(600, 500);
+        janela.setVisible(true);
+
+        // Configurando painel
+        JPanel jPanel1 = new JPanel();
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+        jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 653, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 420, Short.MAX_VALUE)
+        );
     
+        GroupLayout layout = new GroupLayout(janela.getContentPane());
+        janela.getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(72, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+    
+        janela.pack();
+
+        Mat video = new Mat();
+        VideoCapture captura = new VideoCapture(0);
+
+        if(captura.isOpened()) {
+            while (true) {
+                captura.read(video);
+
+                if(!video.empty()) {
+                    janela.setSize(video.width() + 50, video.height() + 70);
+                    BufferedImage image = convertMatToImage(video);
+                    Graphics g = jPanel1.getGraphics();
+                    g.drawImage(image, 10, 10, image.getWidth(), image.getHeight(), null);
+                }
+            }
+        }
+    }
+
+    
+    /**
+     * Exemplo 04
+     * Acessando a Webcan com o OpenCV e detectando as faces
+     */
+    public static void exemplo04() {
+
+        // Configurando janela
+        JFrame janela = new JFrame();
+        janela.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        janela.setSize(600, 500);
+        janela.setVisible(true);
+
+        // Configurando painel
+        JPanel jPanel1 = new JPanel();
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+        jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 653, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 420, Short.MAX_VALUE)
+        );
+    
+        GroupLayout layout = new GroupLayout(janela.getContentPane());
+        janela.getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(72, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+    
+        janela.pack();
+
+        Mat video = new Mat();
+        VideoCapture captura = new VideoCapture(0);
+
+        if(captura.isOpened()) {
+            while (true) {
+                captura.read(video);
+
+                if(!video.empty()) {
+                    janela.setSize(video.width() + 50, video.height() + 70);
+
+                    Mat colorfulImage = video;
+                    Mat greyImage = new Mat();
+                    Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
+
+                    MatOfRect facesDetectadas = new MatOfRect();
+                    CascadeClassifier cc = new CascadeClassifier("src\\cascades\\haarcascade_frontalface_default.xml");
+                    cc.detectMultiScale(greyImage, facesDetectadas);
+                
+                    System.out.println("Quantidade de faces detectadas: " + facesDetectadas.toArray().length);
+
+                    for(Rect rect : facesDetectadas.toArray()) {
+                        System.out.println("Localizacao da face na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+                        Imgproc.rectangle(
+                            colorfulImage, // Imagem que sera adicionada os retangulos
+                            new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                            new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                            new Scalar(0, 0, 255), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                            2 // Tamanho da borda em pexels
+                        );
+                    }
+
+                    CascadeClassifier ccOlho = new CascadeClassifier("src\\cascades\\haarcascade_eye.xml");
+                    MatOfRect olhosDetectadas = new MatOfRect();
+                    ccOlho.detectMultiScale(greyImage, olhosDetectadas);
+
+                    System.out.println("Quantidade de olhos detectadas: " + olhosDetectadas.toArray().length);
+                    for(Rect rect : olhosDetectadas.toArray()) {
+                        System.out.println("Localizacao do olho na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+                        Imgproc.rectangle(
+                            colorfulImage, // Imagem que sera adicionada os retangulos
+                            new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                            new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                            new Scalar(0, 255, 00), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                            2 // Tamanho da borda em pexels
+                        );
+                    }
+
+                    BufferedImage image = convertMatToImage(colorfulImage);
+                    Graphics g = jPanel1.getGraphics();
+                    g.drawImage(image, 10, 10, image.getWidth(), image.getHeight(), null);
+                }
+            }
+        }
+    }
+
 
     /*/ +---------------+
         | Metodos uteis |
