@@ -32,7 +32,8 @@ public class main {
         //exemplo02();
         //exemplo03();
         //exemplo04();
-        exemplo05();
+        //exemplo05();
+        exemplo06();
     }
 
     /**
@@ -359,6 +360,45 @@ public class main {
 
         for(Rect rect : facesDetectadas.toArray()) {
             System.out.println("Localizacao da face na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+            Imgproc.rectangle(
+                colorfulImage, // Imagem que sera adicionada os retangulos
+                new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                new Scalar(0, 0, 255), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                2 // Tamanho da borda em pexels
+            );
+        }
+
+        mostraImagem(convertMatToImage(colorfulImage));
+    }
+
+    
+
+    /**
+     * Exemplo 06
+     * Deteccao de relogios
+     */
+    public static void exemplo06() {
+        Mat colorfulImage = imread("src\\images\\outros\\relogio3.jpg");
+        Mat greyImage = new Mat();
+        Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
+        
+        CascadeClassifier cc = new CascadeClassifier("src\\cascades\\relogios.xml");
+        MatOfRect relogioDetectadas = new MatOfRect();
+        cc.detectMultiScale(
+            greyImage, 
+            relogioDetectadas,
+            1.02,
+            2, 
+            0,
+            new Size(45, 45),
+            new Size(80, 80)
+        );
+
+        System.out.println("Quantidade de relogios detectadas: " + relogioDetectadas.toArray().length);
+
+        for(Rect rect : relogioDetectadas.toArray()) {
+            System.out.println("Localizacao do relogio na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
             Imgproc.rectangle(
                 colorfulImage, // Imagem que sera adicionada os retangulos
                 new Point(rect.x, rect.y), // Pontos iniciais do retangulo
