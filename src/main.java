@@ -34,7 +34,8 @@ public class main {
         //exemplo04();
         //exemplo05();
         //exemplo06();
-        exemplo07();
+        //exemplo07();
+        exemplo08();
     }
 
     /**
@@ -433,10 +434,48 @@ public class main {
             new Size(270, 270)
         );
 
-        System.out.println("Quantidade de relogios detectadas: " + carroDetectados.toArray().length);
+        System.out.println("Quantidade de carros detectadas: " + carroDetectados.toArray().length);
 
         for(Rect rect : carroDetectados.toArray()) {
-            System.out.println("Localizacao do relogio na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+            System.out.println("Localizacao do carro na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+            Imgproc.rectangle(
+                colorfulImage, // Imagem que sera adicionada os retangulos
+                new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                new Scalar(0, 0, 255), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                2 // Tamanho da borda em pexels
+            );
+        }
+
+        mostraImagem(convertMatToImage(colorfulImage));
+    }
+    
+
+    /**
+     * Exemplo 08
+     * Deteccao de objetos personalizados
+     */
+    public static void exemplo08() {
+        Mat colorfulImage = imread("src\\images\\outros\\banana1.jpg");
+        Mat greyImage = new Mat();
+        Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
+        
+        CascadeClassifier cc = new CascadeClassifier("src\\cascades\\banana_classifier.xml");
+        MatOfRect detectado = new MatOfRect();
+        cc.detectMultiScale(
+            greyImage, 
+            detectado,
+            1.10,
+            2, 
+            0,
+            new Size(40, 40),
+            new Size(550, 550)
+        );
+
+        System.out.println("Quantidade detectadas: " + detectado.toArray().length);
+
+        for(Rect rect : detectado.toArray()) {
+            System.out.println("Localizacao na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
             Imgproc.rectangle(
                 colorfulImage, // Imagem que sera adicionada os retangulos
                 new Point(rect.x, rect.y), // Pontos iniciais do retangulo
