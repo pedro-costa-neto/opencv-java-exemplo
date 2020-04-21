@@ -31,7 +31,8 @@ public class main {
         //exemplo01();
         //exemplo02();
         //exemplo03();
-        exemplo04();
+        //exemplo04();
+        exemplo05();
     }
 
     /**
@@ -331,6 +332,43 @@ public class main {
                 }
             }
         }
+    }
+
+    /**
+     * Exemplo 05
+     * Deteccao de gatos
+     */
+    public static void exemplo05() {
+        Mat colorfulImage = imread("src\\images\\outros\\gato3.jpg");
+        Mat greyImage = new Mat();
+        Imgproc.cvtColor(colorfulImage, greyImage, COLOR_BGR2GRAY);
+        
+        CascadeClassifier cc = new CascadeClassifier("src\\cascades\\haarcascade_frontalcatface.xml");
+        MatOfRect facesDetectadas = new MatOfRect();
+        cc.detectMultiScale(
+            greyImage, 
+            facesDetectadas,
+            1.06,
+            5, 
+            0,
+            new Size(30, 30),
+            new Size(500, 500)
+        );
+
+        System.out.println("Quantidade de faces detectadas: " + facesDetectadas.toArray().length);
+
+        for(Rect rect : facesDetectadas.toArray()) {
+            System.out.println("Localizacao da face na imagem: " + rect.x + " " + rect.y + " " + rect.width + " " + rect.height);
+            Imgproc.rectangle(
+                colorfulImage, // Imagem que sera adicionada os retangulos
+                new Point(rect.x, rect.y), // Pontos iniciais do retangulo
+                new Point(rect.x + rect.width, rect.y + rect.height), // Pontos finais do retangulo
+                new Scalar(0, 0, 255), // Cor da borda do retangulo em BGR (0, 0, 255) Vermelha
+                2 // Tamanho da borda em pexels
+            );
+        }
+
+        mostraImagem(convertMatToImage(colorfulImage));
     }
 
 
