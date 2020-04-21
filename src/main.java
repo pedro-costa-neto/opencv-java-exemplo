@@ -278,7 +278,15 @@ public class main {
 
                     MatOfRect facesDetectadas = new MatOfRect();
                     CascadeClassifier cc = new CascadeClassifier("src\\cascades\\haarcascade_frontalface_default.xml");
-                    cc.detectMultiScale(greyImage, facesDetectadas);
+                    cc.detectMultiScale(
+                        greyImage, 
+                        facesDetectadas,
+                        1.1,
+                        1,
+                        0,
+                        new Size(100, 100),
+                        new Size(500, 500)
+                    );
                 
                     System.out.println("Quantidade de faces detectadas: " + facesDetectadas.toArray().length);
 
@@ -295,7 +303,15 @@ public class main {
 
                     CascadeClassifier ccOlho = new CascadeClassifier("src\\cascades\\haarcascade_eye.xml");
                     MatOfRect olhosDetectadas = new MatOfRect();
-                    ccOlho.detectMultiScale(greyImage, olhosDetectadas);
+                    ccOlho.detectMultiScale(
+                        greyImage, 
+                        olhosDetectadas,
+                        1.1,
+                        1,
+                        0,
+                        new Size(30, 30),
+                        new Size(70, 70)
+                    );
 
                     System.out.println("Quantidade de olhos detectadas: " + olhosDetectadas.toArray().length);
                     for(Rect rect : olhosDetectadas.toArray()) {
